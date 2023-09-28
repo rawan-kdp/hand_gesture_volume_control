@@ -24,6 +24,7 @@ start_time = None
 in_position = False
 
 while True:
+    # Capture a frame from the webcam
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
@@ -31,6 +32,7 @@ while True:
 
     if results.multi_hand_landmarks:
         for handlandmark in results.multi_hand_landmarks:
+            # Extract landmark information for each detected hand
             for id, lm in enumerate(handlandmark.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
@@ -41,14 +43,18 @@ while True:
             x1, y1 = lmList[4][1], lmList[4][2]
             x2, y2 = lmList[8][1], lmList[8][2]
 
+            # Draw circles at thumb and index finger tips, and a line connecting them
             cv2.circle(img, (x1, y1), 15, (255, 0, 0), cv2.FILLED)
             cv2.circle(img, (x2, y2), 15, (255, 0, 0), cv2.FILLED)
             cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
 
+            # Calculate hand length (distance between thumb and index finger)
             length = hypot(x2 - x1, y2 - y1)
+            # Map hand length to volume range
             vol = np.interp(length, [15, 220], [volMin, volMax])
 
             print(vol, length)
+            # Set system volume based on hand length
             volume.SetMasterVolumeLevel(vol, None)
 
             # Check if hand is in a position for 6 seconds
@@ -63,8 +69,10 @@ while True:
             else:
                 in_position = False
 
+    # Display the image with annotations
     cv2.imshow('Image', img)
     
+    # Break the loop when 'q' is pressed
     if cv2.waitKey(1) & 0xff == ord('q'): 
         break
 
