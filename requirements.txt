@@ -1,0 +1,7 @@
+install these libraries in cmd
+pip install opencv-python
+pip install mediapipe
+pip install comtypes
+pip install numpy
+pip install pycaw
+and other needed as per your pc
